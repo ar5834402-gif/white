@@ -293,15 +293,26 @@ function MusicManager() {
   const createMusic = useCreateMusic();
   const deleteMusic = useDeleteMusic();
   const { toast } = useToast();
-  const form = useForm({ resolver: zodResolver(insertMusicSchema) });
+  const [title, setTitle] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) {
+      toast({ variant: "destructive", title: "Error", description: "Please select an MP3 file" });
+      return;
+    }
     try {
-      await createMusic.mutateAsync(data);
-      form.reset();
-      toast({ title: "Success", description: "Song added!" });
+      await createMusic.mutateAsync({ title: title || file.name, file });
+      setTitle("");
+      setFile(null);
+      // Reset file input
+      const fileInput = document.getElementById('music-file') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+      
+      toast({ title: "Success", description: "Song uploaded!" });
     } catch {
-      toast({ variant: "destructive", title: "Error", description: "Failed to add song" });
+      toast({ variant: "destructive", title: "Error", description: "Failed to upload song" });
     }
   };
 
@@ -311,16 +322,28 @@ function MusicManager() {
       
       <Card className="border-rose-100">
         <CardContent className="pt-6">
-           <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 items-end">
-             <div className="space-y-2 flex-1">
+           <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-4 items-end">
+             <div className="space-y-2 flex-1 w-full">
                <Label>Song Title</Label>
-               <Input {...form.register("title")} placeholder="Our Song" />
+               <Input 
+                 value={title} 
+                 onChange={(e) => setTitle(e.target.value)} 
+                 placeholder="Our Song" 
+               />
              </div>
-             <div className="space-y-2 flex-1">
-               <Label>Audio URL (MP3)</Label>
-               <Input {...form.register("url")} placeholder="https://..." />
+             <div className="space-y-2 flex-1 w-full">
+               <Label>MP3 File</Label>
+               <Input 
+                 id="music-file"
+                 type="file" 
+                 accept="audio/mpeg" 
+                 onChange={(e) => setFile(e.target.files?.[0] || null)} 
+               />
              </div>
-             <Button type="submit" className="bg-rose-500" disabled={createMusic.isPending}>Add Song</Button>
+             <Button type="submit" className="bg-rose-500 w-full md:w-auto" disabled={createMusic.isPending}>
+               {createMusic.isPending ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : null}
+               Upload Song
+             </Button>
            </form>
         </CardContent>
       </Card>

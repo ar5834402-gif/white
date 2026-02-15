@@ -154,11 +154,14 @@ export function useMusic() {
 export function useCreateMusic() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: z.infer<typeof insertMusicSchema>) => {
+    mutationFn: async (data: { title: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("file", data.file);
+
       const res = await fetch(api.music.create.path, {
         method: api.music.create.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: formData,
       });
       if (!res.ok) throw new Error("Failed to add music");
       return await res.json();
