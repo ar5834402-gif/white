@@ -1,0 +1,171 @@
+Create a full-stack White Day web app with server-side persistent storage and MULTI-USER support.
+
+CRITICAL STORAGE REQUIREMENT:
+- Use SQLite database that persists between repl restarts
+- Store all data on SERVER, NOT browser localStorage
+- Save uploaded files (photos/videos/music) to server disk
+- Database must survive repl stop/start
+
+MULTI-USER SYSTEM:
+- Support UNLIMITED users (not just one couple)
+- Each user gets their own account with unique username
+- Each user can only see THEIR OWN content
+- User A's photos/videos/coupons are completely separate from User B's
+- Simple registration system (username + password + girlfriend's name)
+- Each user has their own admin panel to manage their content
+
+DATABASE STRUCTURE:
+Tables needed:
+- users (id, username, password_hash, girlfriend_name, created_date)
+- memories (id, user_id, date, title, description, media_type, media_path)
+- coupons (id, user_id, title, description, is_redeemed)
+- reasons (id, user_id, reason_text)
+- media_files (id, user_id, file_type, file_path, uploaded_date)
+
+File storage organization:
+/uploads/
+  /user_123/
+    /photos/
+    /videos/
+    /music/
+  /user_456/
+    /photos/
+    /videos/
+    /music/
+
+REQUIRED FEATURES:
+
+1. USER REGISTRATION & LOGIN:
+   
+   A. Registration Page:
+   - New users can create account
+   - Fields: Username, Password, Girlfriend's Name
+   - Creates isolated storage for that user
+   
+   B. Login Page:
+   - Username + Password
+   - After login, user sees only their content
+   
+   C. Two Access Modes per User:
+   - Admin Mode (for the boyfriend to upload content)
+   - Girlfriend Mode (the romantic view with password)
+
+2. USER'S ADMIN PANEL (for each boyfriend):
+   After login, provide dashboard to:
+   - Upload photos (JPEG/PNG) → saves to /uploads/user_X/photos/
+   - Upload videos (MP4, max 50MB) → saves to /uploads/user_X/videos/
+   - Upload music (MP3) → saves to /uploads/user_X/music/
+   - Add timeline memories (date + photo/video + text)
+   - Add love coupons
+   - Add "why I love you" reasons
+   - Set girlfriend's access password (separate from admin login)
+   - Get shareable link for girlfriend
+
+3. GIRLFRIEND'S VIEW (unique per user):
+   
+   URL format: /view/:username
+   Password: Each user sets their own girlfriend password
+   
+   A. Memory Timeline
+   - Shows only THAT user's uploaded memories
+   - Vertical scrolling timeline
+   - Date, photo/video, description from database
+   - Smooth scroll animations
+
+   B. Love Coupons
+   - Shows only THAT user's coupons
+   - Grid of clickable coupon cards
+   - Click marks as "Redeemed" in database
+   - Confetti animation on redeem
+
+   C. "Why I Love You" Button
+   - Random reason from THAT user's reasons list
+   - Heart button with pulse effect
+   - Smooth fade-in animation
+
+   D. Background Music Player
+   - Plays THAT user's uploaded music
+   - Auto-play with permission
+   - Simple play/pause controls
+
+   E. Video Message Section
+   - Plays THAT user's uploaded video
+   - Simple video player with controls
+
+4. WHITE DAY DESIGN:
+   - Color scheme: White background, soft pink accents, pastel blue
+   - Floating sakura petals animation
+   - Elegant serif font (headings)
+   - Handwritten font (messages)
+   - Heart and flower icons
+   - Smooth fade-in animations
+
+5. TECH STACK:
+   Backend: Node.js + Express + SQLite + Multer (file uploads) + bcrypt (password hashing)
+   Frontend: HTML + CSS + Vanilla JavaScript
+   Session Management: express-session (to keep users logged in)
+   Database ORM: better-sqlite3 or Sequelize
+
+6. FOLDER STRUCTURE:
+   /server.js (backend with auth routes)
+   /database.db (stores all users and their data)
+   /uploads/
+     /user_1/photos/
+     /user_1/videos/
+     /user_1/music/
+     /user_2/photos/
+     /user_2/videos/
+     /user_2/music/
+   /public/
+     /index.html (landing/login page)
+     /register.html (new user signup)
+     /admin.html (user's content dashboard)
+     /view.html (girlfriend's romantic view)
+     /style.css
+     /script.js
+
+7. KEY ROUTES:
+   POST /api/register (create new user account)
+   POST /api/login (user login)
+   POST /api/logout
+   GET  /api/user/memories (get logged-in user's memories)
+   POST /api/user/upload-photo (upload to user's folder)
+   POST /api/user/add-coupon
+   GET  /view/:username (girlfriend's view - requires password)
+   POST /api/verify-girlfriend-password
+
+SECURITY:
+- Passwords must be hashed (use bcrypt)
+- Users can ONLY access their own data
+- File uploads restricted by user session
+- Girlfriend password separate from admin password
+- SQL injection protection
+
+MUST HAVE:
+- Complete user isolation (User A cannot see User B's content)
+- When repl restarts, all users' data persists
+- Simple README with:
+  * How to register new account
+  * How to upload content
+  * How to share girlfriend link
+  * Example girlfriend link format
+
+LANDING PAGE:
+Create attractive home page with:
+- "Create Your White Day Experience" button → Register
+- "Login to Your Dashboard" button → Login
+- Brief explanation of what the app does
+- Beautiful White Day themed design
+
+Example User Flow:
+1. Friend visits site → Clicks "Create Account"
+2. Registers: username="john_doe", password="secure123", gf_name="Sarah"
+3. Logs into admin dashboard
+4. Uploads 10 photos, 1 video, 1 song, adds memories/coupons/reasons
+5. Sets girlfriend password: "iloveyou"
+6. Gets shareable link: https://yourapp.replit.dev/view/john_doe
+7. Sends link to Sarah
+8. Sarah enters password "iloveyou" → sees romantic personalized experience
+9. Meanwhile, another friend can register as "mike_smith" with completely separate content
+
+Keep it clean, secure, and scalable for multiple users.

@@ -1,0 +1,78 @@
+Create a full-stack web application for White Day with the following requirements:
+
+CRITICAL REQUIREMENT:
+- DO NOT use browser localStorage or sessionStorage
+- All data must be stored SERVER-SIDE in a persistent database
+- The database should survive repl restarts and be accessible from any browser/device
+- Use SQLite or PostgreSQL for the database (whichever works best in Replit)
+
+FEATURES TO BUILD:
+
+1. SERVER-SIDE DATABASE STORAGE:
+   - Create a database that stores:
+     * User authentication (username/password for my girlfriend to login)
+     * Photos/images (uploaded by me, stored as files on server with database references)
+     * Memory timeline entries (date, title, description, image path)
+     * Love coupons/promises (title, description, redeemed status)
+     * "Why I Love You" reasons (random text entries)
+     * Audio files for background music (uploaded by me)
+   
+2. FILE UPLOAD SYSTEM:
+   - Admin panel where I can upload:
+     * Photos (JPEG/PNG)
+     * Music files (MP3)
+   - Files should be stored in server directories (like /uploads/photos, /uploads/music)
+   - Database should reference file paths, not store files directly
+
+3. AUTHENTICATION:
+   - Simple login page with password (just for my girlfriend)
+   - Password should be stored securely (hashed)
+   - After login, she can access the app
+   - I need a separate admin login to upload content
+
+4. BACKEND API:
+   - Use Express.js (Node.js) OR Flask (Python) - whichever you prefer
+   - Create RESTful API endpoints:
+     * POST /api/upload-photo (for me to upload photos)
+     * GET /api/memories (fetch all timeline memories)
+     * POST /api/redeem-coupon/:id (mark coupon as redeemed)
+     * GET /api/random-reason (get random "why I love you" text)
+     * GET /api/music (get music file path for player)
+
+5. FRONTEND FEATURES:
+   - Memory Timeline (scrollable, shows photos + dates + descriptions from database)
+   - Love Coupons grid (fetch from database, can be clicked to redeem)
+   - "Why I Love You" button (fetches random reason from database)
+   - Background music player (plays music file from server)
+   - All images should load from server, not base64 in browser
+
+6. TECH STACK:
+   - Backend: Node.js + Express + SQLite (OR Python + Flask + SQLite)
+   - Frontend: HTML + CSS + Vanilla JavaScript (or React if easier)
+   - Database ORM: Sequelize (Node) or SQLAlchemy (Python)
+   - File handling: Multer (Node) or Flask file uploads
+
+7. FOLDER STRUCTURE:
+   /server
+     - database.db (SQLite file - this persists data)
+     - server.js or app.py (backend code)
+   /uploads
+     /photos
+     /music
+   /public
+     - index.html
+     - style.css
+     - script.js
+
+IMPORTANT:
+- When the repl starts, the database should already exist with all my data
+- Even if I stop and restart the repl, all photos, music, and memories should still be there
+- Make sure file uploads actually save to disk, not just memory
+- Provide me with instructions on how to add initial data (photos, music, memories)
+
+OUTPUT:
+- Working full-stack app
+- README with:
+  * How to add photos/music through admin panel
+  * How to set girlfriend's login password
+  * Database schema explanation
